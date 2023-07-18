@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white md:p-5 max-h-full">
+    <div class="bg-white md:p-5 max-h-full h-full">
         <Suspense>
             <Home/>
         </Suspense>

@@ -1,58 +1,55 @@
 <template>
-    <div class="home h-full md:rounded-xl flex flex-col py-3 px-5">
+    <div class="home h-full md:rounded-xl flex flex-col py-3 px-5 justify-center items-center">
         <span class="uppercase text-xs">fast money</span>
-        <h1 class="text-7xl font-medium mt-12">Currency Converter</h1>
-        <p class="text-base mt-8 mx-auto description">Convert popular currencies from around the world with updated exchange rates using our calculator.</p>
-        <div class="flex flex-wrap mt-5 bg-white rounded-md border-0 py-1.5 px-3 ring-1 ring-inset ring-gray-300 shadow-sm">
-            <div class="w-1/2">
-                <label for="from">
-                    From
-                </label>
-                <select name="" id="">
-                    <option value="usd">usd</option>
-                </select>
+        <h1 class="text-3xl md:text-7xl font-medium mt-5 md:mt-1">Currency Converter</h1>
+        <p class="text-sm md:text-base mt-5 md:mt-8 mx-auto description">Convert popular currencies from around the world with updated exchange rates using our calculator.</p>
+        <div class="chart-container flex flex-wrap flex-col md:flex-row  mt-12 mb-5 md:mt-5 bg-white rounded-md border-0 py-1.5 px-3 ring-1 ring-inset ring-gray-300 shadow-md">
+            <div class="w-full md:w-1/2 flex items-center justify-center">
+                <label for="from" class="block text-sm font-medium leading-6 text-gray-900 pt-1 mr-3">From</label>
+                <div class="mt-2">
+                    <select
+                        id="from"
+                        name="from"
+                        class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                        >
+                        <option
+                            v-for="(currency, i) in currencies"
+                            :key="i"
+                            :value="i"
+                            :disabled="i != 'USD'"
+                            :selected="i == 'USD'">
+                            {{i}} - {{ currency }}
+                        </option>
+                    </select>
+                </div>
             </div>
-            <div class="w-1/2">to</div>
-            <div class="w-full">
+            <div class="w-full md:w-1/2 flex items-center justify-center">
+                <label for="from" class="block text-sm font-medium leading-6 text-gray-900 pt-1 mr-3">To</label>
+                <div class="mt-2">
+                    <select
+                        id="to"
+                        name="to"
+                        class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                        v-model="selectedCurrency">
+                        <option
+                            v-for="(currency, i) in currencies"
+                            :key="i"
+                            :value="i">
+                            {{i}} - {{ currency }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="w-full chart-section">
                 <ApexChart
                     width="100%"
-                    height="200"
+                    height="100%"
                     type="line"
                     :options="options"
-                    :series="series"/>
+                    :series="currencyData"/>
             </div>
         </div>
-        <p class="text-sm mx-auto mt-5">Currency calculation tools use reference exchange rates obtained from major market data sources</p>
-        <!-- <label for="from">From</label>
-        <select name="from" id="from">
-            <option
-                v-for="(currency, i) in currencies"
-                :key="i"
-                :disabled="i != 'USD'"
-                :selected="i == 'USD'"
-                :value="currency">
-                {{i}} - {{ currency }}
-            </option>
-        </select> <br>
-        <label for="to">To</label>
-        <select name="to" id="to" v-model="selectedCurrency">
-            <option
-                v-for="(currency, i) in currencies"
-                :key="i"
-                :value="i">
-                {{i}} - {{ currency }}
-            </option>
-        </select>
-        <div v-if="!loading">
-            <p
-                v-for="(data, i) in currencyData"
-                :key="i">
-                Rate: {{ selectedCurrency }} {{ data.rates[selectedCurrency] }}
-            </p>
-        </div>
-        <div v-else>
-            Loading...
-        </div> -->
+        <p class="text-sm mx-auto mt-3 md:mt-5">Currency calculation tools use reference exchange rates obtained from major market data sources</p>
     </div>
 </template>
 
@@ -75,11 +72,11 @@ export default {
         // Initialize and set default values
         const router = useRouter()
         let currencies = ref([])
-        let currencyData = ref(null)
+        let currencyData = ref([{name: 'currency', data: []}])
         let selectedCurrency = ref('ARS')
         let loading = ref(false)
 
-        const options = {
+        let options = ref({
             chart: {
                 toolbar: {
                     show: false
@@ -92,19 +89,22 @@ export default {
                curve: 'smooth',
             },
             xaxis: {
-                categories: [1990, 2000, 3000, 1123, 10432]
+                categories: [],
+                tooltip: {
+                    enabled: false
+                }
+            },
+            tooltip: {
+                x: {
+                    show: false
+                },
+                intersect: false
             }
-        }
-        let series = ref([
-            {
-                name: 'test-1',
-                data: [10, 15, 30, 22, 33]
-            }
-        ])
+        })
 
         if (!token) router.push('/login')
 
-        return {router, currencies, currencyData, selectedCurrency, loading, options, series}
+        return {router, currencies, currencyData, selectedCurrency, loading, options}
     },
     async mounted () {
         await this.getCurrencies()
@@ -130,7 +130,10 @@ export default {
 
             await fetch(`${apiURL}/historic?${params}`)
             .then(resp => resp.json())
-            .then(data => {this.currencyData = data; this.loading = false})
+            .then(data => {
+                this.currencyData[0].name = this.selectedCurrency
+                this.currencyData[0].data = data.map(d => d.rates[this.selectedCurrency].toFixed(2))
+            })
             .catch(err => alert(err))
         },
         getMonthsDates (amount) {
@@ -146,6 +149,8 @@ export default {
                 let date = initDate.setMonth(initDate.getMonth() - 1)
                 dates.push(this.formatDate(date))
             }
+
+            this.options = { ...this.options, xaxis: {categories: dates.map(d => d.replace('2023-', ''))}}
 
             return dates
         },
@@ -169,7 +174,19 @@ export default {
     background-color: #F8F8F8;
 }
 
+.chart-container {
+    width: min(100%, 1000px);
+}
+
 p.description {
     max-width: 560px;
+}
+
+label {
+    min-width: 35px;
+}
+
+.chart-section {
+    height: 43vh;
 }
 </style>
