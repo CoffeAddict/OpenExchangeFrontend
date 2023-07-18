@@ -2,13 +2,11 @@
   "name": "openexchangemiddleware2",
   "version": "0.1.0",
   "private": true,
-  "engines": {
-    "node": "20.x"
-  },
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "vercel-build": "vue-cli-service build"
   },
   "dependencies": {
     "apexcharts": "^3.41.0",
