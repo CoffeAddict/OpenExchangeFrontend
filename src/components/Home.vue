@@ -3,16 +3,24 @@
         <span class="uppercase text-xs">fast money</span>
         <h1 class="text-7xl font-medium mt-12">Currency Converter</h1>
         <p class="text-base mt-8 mx-auto description">Convert popular currencies from around the world with updated exchange rates using our calculator.</p>
-        <div class="flex mt-5 bg-white rounded-md border-0 py-1.5 px-3 pr-20 ring-1 ring-inset ring-gray-300 shadow-sm">
+        <div class="flex flex-wrap mt-5 bg-white rounded-md border-0 py-1.5 px-3 ring-1 ring-inset ring-gray-300 shadow-sm">
             <div class="w-1/2">
                 <label for="from">
                     From
                 </label>
-                <select name="" id="" disabled>
+                <select name="" id="">
                     <option value="usd">usd</option>
                 </select>
             </div>
             <div class="w-1/2">to</div>
+            <div class="w-full">
+                <ApexChart
+                    width="100%"
+                    height="200"
+                    type="line"
+                    :options="options"
+                    :series="series"/>
+            </div>
         </div>
         <p class="text-sm mx-auto mt-5">Currency calculation tools use reference exchange rates obtained from major market data sources</p>
         <!-- <label for="from">From</label>
@@ -52,12 +60,17 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Cookies from 'js-cookie'
+import VueApexCharts from "vue3-apexcharts";
+
 
 const apiURL = process.env.VUE_APP_API_URL
 const token = Cookies.get('token')
 
 export default {
     name: 'LoginForm',
+    components: {
+        ApexChart: VueApexCharts
+    },
     async setup () {
         // Initialize and set default values
         const router = useRouter()
@@ -66,9 +79,32 @@ export default {
         let selectedCurrency = ref('ARS')
         let loading = ref(false)
 
+        const options = {
+            chart: {
+                toolbar: {
+                    show: false
+                },
+                zoom: {
+                    enabled: false
+                }
+            },
+            stroke: {
+               curve: 'smooth',
+            },
+            xaxis: {
+                categories: [1990, 2000, 3000, 1123, 10432]
+            }
+        }
+        let series = ref([
+            {
+                name: 'test-1',
+                data: [10, 15, 30, 22, 33]
+            }
+        ])
+
         if (!token) router.push('/login')
 
-        return {router, currencies, currencyData, selectedCurrency, loading}
+        return {router, currencies, currencyData, selectedCurrency, loading, options, series}
     },
     async mounted () {
         await this.getCurrencies()
