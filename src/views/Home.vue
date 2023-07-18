@@ -1,11 +1,7 @@
 <template>
-    <div class="home">
-        <h1>Currency Converter</h1>
+    <div class="bg-white md:p-5 max-h-full">
         <Suspense>
             <Home/>
-            <template #fallback>
-                Loading...
-            </template>
         </Suspense>
     </div>
 </template>

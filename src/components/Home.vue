@@ -1,6 +1,21 @@
 <template>
-    <div>
-        <label for="from">From</label>
+    <div class="home h-full md:rounded-xl flex flex-col py-3 px-5">
+        <span class="uppercase text-xs">fast money</span>
+        <h1 class="text-7xl font-medium mt-12">Currency Converter</h1>
+        <p class="text-base mt-8 mx-auto description">Convert popular currencies from around the world with updated exchange rates using our calculator.</p>
+        <div class="flex mt-5 bg-white rounded-md border-0 py-1.5 px-3 pr-20 ring-1 ring-inset ring-gray-300 shadow-sm">
+            <div class="w-1/2">
+                <label for="from">
+                    From
+                </label>
+                <select name="" id="" disabled>
+                    <option value="usd">usd</option>
+                </select>
+            </div>
+            <div class="w-1/2">to</div>
+        </div>
+        <p class="text-sm mx-auto mt-5">Currency calculation tools use reference exchange rates obtained from major market data sources</p>
+        <!-- <label for="from">From</label>
         <select name="from" id="from">
             <option
                 v-for="(currency, i) in currencies"
@@ -29,7 +44,7 @@
         </div>
         <div v-else>
             Loading...
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -112,3 +127,13 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.home {
+    background-color: #F8F8F8;
+}
+
+p.description {
+    max-width: 560px;
+}
+</style>
