@@ -1,38 +1,59 @@
 <template>
-    <form
-        action=""
-        @submit.prevent="tryLogin">
-        <label for="email">Email</label>
-        <input
-            type="email"
-            id="email"
-            name="email"
-            placeholder="example@email.com"
-            v-model="email">
-        <label for="password">Password</label>
-        <input
-            id="password"
-            type="password"
-            name="password"
-            placeholder="******"
-            v-model="password">
-        <input
-            type="checkbox"
-            name="checkbox"
-            id="checkbox"
-            v-model="save">
-        <label for="save">Remember machine for 30 days?</label>
-        <button type="submit">Login</button>
-    </form>
+    <div class="flex flex-col lg:flex-row h-full">
+        <div class="lg:w-1/2 w-full">
+            <Header class="pb-10"/>
+            <div>
+                <h1>Login to Account</h1>
+                <p class="pt-1 pb-4">Enter your credentials to access your account</p>
+                <div>
+                    <form
+                        action=""
+                        @submit.prevent="tryLogin">
+                        <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Email</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            autocomplete="email"
+                            class="block rounded-md border-0 py-1.5 px-3 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            placeholder="example@email.com"
+                            v-model="email" />
+                        <label for="password" class="block text-sm font-medium leading-6 text-gray-900">Password</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            autocomplete="current-password"
+                            class="block rounded-md border-0 py-1.5 px-3 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            placeholder="********"
+                            v-model="password" />
+                        <input
+                            type="checkbox"
+                            name="checkbox"
+                            id="checkbox"
+                            v-model="save">
+                        <button type="submit">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="lg:w-1/2 lg:visible w-full invisible">
+            right-side
+        </div>
+    </div>
 </template>
 
 <script>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Cookies from 'js-cookie';
+import Header from './Home/Header.vue'
 
 export default {
     name: 'LoginForm',
+    components: {
+        Header
+    },
     setup () {
         // Initialize
         const router = useRouter()
@@ -63,3 +84,12 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+@media screen and (max-width: 600px) {
+    p {
+        max-width: 308px;
+        margin: 0 auto;
+    }
+}
+</style>
