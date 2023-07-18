@@ -12,24 +12,22 @@
                         @submit.prevent="tryLogin">
                         <label for="email" class="invisible">Email</label>
                         <input
-                            type="email"
-                            id="email"
-                            name="email"
+                            type="text"
+                            id="username"
+                            name="username"
                             required
-                            autocomplete="email"
                             class="shadow-sm block rounded-md border-0 py-1.5 px-3 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-700 sm:text-sm sm:leading-6 w-full"
-                            placeholder="example@email.com"
+                            placeholder="Username"
                             :class="{
                                 'ring-red-600': error
                             }"
-                            v-model="email" />
+                            v-model="username" />
                         <label for="password" class="invisible">Password</label>
                         <input
                             type="password"
                             id="password"
                             name="password"
                             required
-                            autocomplete="current-password"
                             class="shadow-sm block rounded-md border-0 py-1.5 px-3 pr-20  text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-700 sm:text-sm sm:leading-6 w-full"
                             placeholder="********"
                             :class="{
@@ -63,7 +61,7 @@
 <script>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import Cookies from 'js-cookie';
+import { useCookies } from "vue3-cookies"
 import Header from './Home/Header.vue'
 import Footer from './Home/Footer.vue'
 
@@ -76,31 +74,35 @@ export default {
     setup () {
         // Initialize
         const router = useRouter()
-        const token = Cookies.get('token')
-        let email = ref('')
+        const { cookies } = useCookies()
+        const token = cookies.get("token")
+        let username = ref('')
         let password = ref('')
         let save = ref(false)
         let error = ref(false)
 
         if (token) router.push('/home')
 
-        return {email, password, router, save, error}
+        return {username, password, router, save, error, cookies}
     },
     methods: {
         tryLogin () {
             this.error = false
             let params = new URLSearchParams()
-            params.append('user', this.email)
+            params.append('user', this.username)
             params.append('password', this.password)
             params.append('save', this.save)
 
             fetch(`${process.env.VUE_APP_API_URL}/login?${params}`, {method: 'POST'})
             .then(resp => resp.status == 200 ? resp.json() : null)
             .then(data => {
-                Cookies.set('token', data.token)
+                this.cookies.set('token', data.token)
                 this.router.push('/home')
             })
-            .catch(() => this.error = true)
+            .catch((err) => {
+                alert(err)
+                this.error = true
+            })
         }
     }
 }
