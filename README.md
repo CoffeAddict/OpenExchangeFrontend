@@ -1,8 +1,13 @@
-# openexchangemiddleware2
+# Open Exchange App 🚀
 
+This app was made to covert different 🪙 currencies between them and display the last months values
+
+Reference: https://openexchangerates.org/
 ## Project setup
 ```
-npm install
+Node 16.x required
+
+npm ci
 ```
 
 ### Compiles and hot-reloads for development
@@ -19,6 +24,3 @@ npm run build
 ```
 npm run lint
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).

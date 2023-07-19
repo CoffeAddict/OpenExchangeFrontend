@@ -88,6 +88,7 @@ export default {
     methods: {
         tryLogin () {
             this.error = false
+
             let params = new URLSearchParams()
             params.append('user', this.username)
             params.append('password', this.password)
@@ -100,8 +101,8 @@ export default {
                 this.router.push('/home')
             })
             .catch((err) => {
-                alert(err)
                 this.error = true
+                alert(err)
             })
         }
     }

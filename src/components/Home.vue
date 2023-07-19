@@ -1,5 +1,5 @@
 <template>
-    <div class="home h-full md:rounded-xl flex flex-col py-3 px-5 justify-center items-center">
+    <div class="home bg-white h-full md:rounded-xl flex flex-col py-3 px-5 justify-center items-center">
         <span class="uppercase text-xs">fast money</span>
         <h1 class="text-3xl md:text-7xl font-medium mt-5 md:mt-1">Currency Converter</h1>
         <p class="text-sm md:text-base mt-5 md:mt-8 mx-auto description">Convert popular currencies from around the world with updated exchange rates using our calculator.</p>
@@ -95,7 +95,7 @@ export default {
         let fromAmount = ref(1)
         let toAmount = ref(1)
 
-        let options = ref({
+        let options = ref({ // Chart Options
             chart: {toolbar: {show: false},zoom: {enabled: false}},
             stroke: {curve: 'smooth'},
             xaxis: {categories: [],tooltip: {enabled: false},labels: {style: {colors: ['#9499A5','#9499A5','#9499A5','#9499A5','#9499A5','#9499A5']}}},
@@ -107,8 +107,10 @@ export default {
     },
     async mounted () {
         if (!this.token) this.router.push('/login')
+        this.loading = true
         await this.getCurrencies()
         await this.getHistoric()
+        this.loading = false
     },
     methods: {
         async getCurrencies () {
@@ -118,11 +120,12 @@ export default {
             await fetch(`${apiURL}/currencies?${params}`)
             .then(resp => resp.json())
             .then(data => this.currencies = data)
-            .catch(err => alert(err))
+            .catch(err => {
+                if (err.message == 401 || err.message == 403) this.router.push('/login')
+                alert(err)}
+            )
         },
         async getHistoric () {
-            this.loading = true
-
             const dates = this.getMonthsDates()
 
             let params = new URLSearchParams()
@@ -137,7 +140,10 @@ export default {
                 this.currencyData[0].data = data.map(d => d.rates[this.selectedCurrency]).reverse()
                 this.updateExchangeValues('from')
             })
-            .catch(err => alert(err))
+            .catch(err =>{
+                if (err.message == 401 || err.message == 403) this.router.push('/login')
+                alert(err)
+            })
         },
         getMonthsDates (amount) {
             if (!amount) amount = 5
@@ -167,8 +173,8 @@ export default {
         },
         updateExchangeValues (type) {
             const cData = this.currencyData[0].data
-            if (type == 'from') this.toAmount = (this.fromAmount * cData[cData.length - 1]).toFixed(2)
-            if (type == 'to') this.fromAmount = (this.toAmount / cData[cData.length - 1]).toFixed(2)
+            if (type == 'from') this.toAmount = (this.fromAmount * cData[cData.length - 1]).toFixed(4)
+            if (type == 'to') this.fromAmount = (this.toAmount / cData[cData.length - 1]).toFixed(4)
         }
     },
     watch: {
@@ -179,7 +185,7 @@ export default {
 
 <style scoped>
 .home {
-    background-color: #F8F8F8;
+    background-color: #f1f1f1;
 }
 
 .chart-container {
