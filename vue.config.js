@@ -11,6 +11,7 @@ module.exports = {
             favicon32: '',
             favicon16: '',
             appleTouchIcon: '',
+            androidChrome: '',
             maskIcon: '',
             msTileImage: ''
         }

@@ -4,7 +4,9 @@
         <h1 class="text-3xl md:text-7xl font-medium mt-5 md:mt-1">Currency Converter</h1>
         <p class="text-sm md:text-base mt-5 md:mt-8 mx-auto description">Convert popular currencies from around the world with updated exchange rates using our calculator.</p>
         <div class="chart-container flex flex-wrap flex-col md:flex-row  mt-12 mb-5 md:mt-5 bg-white rounded-md border-0 py-1.5 px-3 ring-1 ring-inset ring-gray-300 shadow-md">
-            <div class="w-full md:w-1/2 flex items-center justify-center">
+            <div
+                v-if="!loading"
+                class="w-full md:w-1/2 flex items-center justify-center">
                 <label for="from" class="block text-sm font-medium leading-6 text-gray-900 pt-1 ml-3 mr-2">From</label>
                 <div class="mt-2">
                     <select id="from" name="from" class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
@@ -29,7 +31,9 @@
                         @change="updateExchangeValues('from')"/>
                 </div>
             </div>
-            <div class="w-full md:w-1/2 flex items-center justify-center">
+            <div
+                v-if="!loading"
+                class="w-full md:w-1/2 flex items-center justify-center">
                 <label for="from" class="block text-sm font-medium leading-6 text-gray-900 pt-1 ml-3 mr-2">To</label>
                 <div class="mt-2">
                     <select
@@ -56,13 +60,21 @@
                         @change="updateExchangeValues('to')"/>
                 </div>
             </div>
-            <div class="w-full chart-section">
+            <div
+                v-if="!loading"
+                class="w-full chart-section">
                 <ApexChart
                     width="100%"
                     height="100%"
                     type="line"
                     :options="options"
                     :series="currencyData"/>
+            </div>
+            <div
+                v-if="loading"
+                class="w-full loading-section flex items-center justify-center">
+                <span class="loading-circle animate-spin mr-3"></span>
+                Loading
             </div>
         </div>
         <p class="text-sm mx-auto mt-3 md:mt-5">Currency calculation tools use reference exchange rates obtained from major market data sources</p>
@@ -107,25 +119,28 @@ export default {
     },
     async mounted () {
         if (!this.token) this.router.push('/login')
-        this.loading = true
         await this.getCurrencies()
         await this.getHistoric()
-        this.loading = false
     },
     methods: {
         async getCurrencies () {
+            this.loading = true
+
             let params = new URLSearchParams()
             params.append('token', this.token)
 
             await fetch(`${apiURL}/currencies?${params}`)
             .then(resp => resp.json())
-            .then(data => this.currencies = data)
+            .then(data => {this.currencies = data; this.loading = false})
             .catch(err => {
                 if (err.message == 401 || err.message == 403) this.router.push('/login')
-                alert(err)}
-            )
+                alert(err)
+                this.loading = false
+            })
         },
         async getHistoric () {
+            this.loading = true
+
             const dates = this.getMonthsDates()
 
             let params = new URLSearchParams()
@@ -139,10 +154,12 @@ export default {
                 this.currencyData[0].name = this.selectedCurrency
                 this.currencyData[0].data = data.map(d => d.rates[this.selectedCurrency]).reverse()
                 this.updateExchangeValues('from')
+                this.loading = false
             })
             .catch(err =>{
                 if (err.message == 401 || err.message == 403) this.router.push('/login')
                 alert(err)
+                this.loading = false
             })
         },
         getMonthsDates (amount) {
@@ -200,7 +217,29 @@ label {
     min-width: 35px;
 }
 
-.chart-section {
+.chart-section, .loading-section {
     height: 43vh;
+}
+
+.loading-section {
+    color: #c0c0c0;
+}
+
+.loading-circle {
+    min-width: 30px;
+    min-height: 30px;
+    border: 3px solid #c0c0c0;
+    border-radius: 50%; ;
+    position: relative;
+}
+
+.loading-circle:before {
+    content: '';
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    top: -7.5px;
+    left: -7.5px;
+    background: #fff;
 }
 </style>
