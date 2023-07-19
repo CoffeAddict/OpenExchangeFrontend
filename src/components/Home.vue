@@ -11,7 +11,7 @@
                 <div class="mt-2">
                     <select id="from" name="from" class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
                         <option
-                            v-for="(currency, i) in currencies"
+                            v-for="(currency, i) in onlyUSD"
                             :key="i"
                             :value="i"
                             :disabled="i != 'USD'"
@@ -197,6 +197,11 @@ export default {
     },
     watch: {
         selectedCurrency (newVal, oldVal) { newVal != oldVal ? this.getHistoric() : null }
+    },
+    computed: {
+        onlyUSD () {
+            return Object.fromEntries(Object.entries(this.currencies).filter(([key]) => key.includes('USD')));
+        }
     }
 }
 </script>
