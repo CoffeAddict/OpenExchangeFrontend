@@ -152,9 +152,11 @@ export default {
             await fetch(`${apiURL}/historic?${params}`)
             .then(resp => resp.json())
             .then(data => {
-                this.currencyData[0].name = this.selectedCurrency
-                this.currencyData[0].data = data.map(d => d.rates[this.selectedCurrency]).reverse()
-                this.updateExchangeValues('from')
+                if (Array.isArray(data)) {
+                    this.currencyData[0].name = this.selectedCurrency
+                    this.currencyData[0].data = data.map(d => d.rates[this.selectedCurrency]).reverse()
+                    this.updateExchangeValues('from')
+                }
                 this.loading = false
             })
             .catch(err =>{
