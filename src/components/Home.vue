@@ -3,7 +3,7 @@
         <span class="uppercase text-xs">fast money</span>
         <h1 class="text-3xl md:text-7xl font-medium mt-5 md:mt-1">Currency Converter</h1>
         <p class="text-sm md:text-base mt-5 md:mt-8 mx-auto description">Convert popular currencies from around the world with updated exchange rates using our calculator.</p>
-        <div class="chart-container flex flex-wrap flex-col md:flex-row  mt-12 mb-5 md:mt-5 bg-white rounded-md border-0 py-1.5 px-3 ring-1 ring-inset ring-gray-300 shadow-md">
+        <div class="chart-container flex flex-wrap flex-col md:flex-row mb-5 mt-5 bg-white rounded-md border-0 py-1.5 px-3 ring-1 ring-inset ring-gray-300 shadow-md">
             <div
                 v-if="!loading"
                 class="w-full md:w-1/2 flex items-center justify-center">
@@ -119,6 +119,7 @@ export default {
     },
     async mounted () {
         if (!this.token) this.router.push('/login')
+
         await this.getCurrencies()
         await this.getHistoric()
     },
