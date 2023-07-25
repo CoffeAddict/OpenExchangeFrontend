@@ -4,8 +4,8 @@ This app was made to covert different 🪙 currencies between them and display t
 
 Reference: https://openexchangerates.org/
 
-Preview Link: https://open-exchange-frontend.vercel.app/
-User: admin
+Preview Link: https://open-exchange-frontend.vercel.app/ \
+User: admin \
 Password: admin
 ## Project setup
 ```
